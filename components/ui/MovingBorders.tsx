@@ -70,7 +70,7 @@ export function Button({
 
 export const MovingBorder = ({
   children,
-  duration = 2000,
+  duration = 4000, // Increased duration for slower animation
   rx,
   ry,
   ...otherProps
@@ -130,8 +130,8 @@ export const MovingBorder = ({
           display: "inline-block",
           transform,
           background: "radial-gradient(circle, #CBACF9 40%, transparent 60%)",
-          width: "40px",
-          height: "40px",
+          width: "60px", // Increased width for longer lines
+          height: "60px", // Increased height for longer lines
           borderRadius: "50%",
         }}
       >
