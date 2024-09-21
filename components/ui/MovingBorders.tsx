@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, forwardRef, memo } from "react";
 import {
   motion,
   useAnimationFrame,
@@ -9,134 +9,138 @@ import {
 } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-export function Button({
-  borderRadius = "1.75rem",
-  children,
-  as: Component = "button",
-  containerClassName,
-  borderClassName,
-  duration,
-  className,
-  ...otherProps
-}: {
+interface ButtonProps {
   borderRadius?: string;
   children: React.ReactNode;
-  as?: any;
+  as?: React.ElementType;
   containerClassName?: string;
   borderClassName?: string;
   duration?: number;
   className?: string;
   [key: string]: any;
-}) {
-  return (
-    <Component
-      className={cn(
-        "bg-transparent relative text-xl p-[1px] overflow-hidden md:col-span-2 md:row-span-1",
-        containerClassName
-      )}
-      style={{
-        borderRadius: borderRadius,
-      }}
-      {...otherProps}
-    >
-      <div
-        className="absolute inset-0 rounded-[1.75rem]"
-        style={{ borderRadius: `calc(${borderRadius} * 0.96)` }}
-      >
-        <MovingBorder duration={duration} rx="30%" ry="30%">
-          <div
-            className={cn(
-              "h-20 w-20 opacity-[0.8] bg-[radial-gradient(circle, #CBACF9 40%, transparent 60%)]",
-              borderClassName
-            )}
-          />
-        </MovingBorder>
-      </div>
-
-      <div
-        className={cn(
-          "relative bg-slate-900/[0.8] border border-slate-800 backdrop-blur-xl text-white flex items-center justify-center w-full h-full text-sm antialiased",
-          className
-        )}
-        style={{
-          borderRadius: `calc(${borderRadius} * 0.96)`,
-        }}
-      >
-        {children}
-      </div>
-    </Component>
-  );
 }
 
-export const MovingBorder = ({
-  children,
-  duration = 4000, // Increased duration for slower animation
-  rx,
-  ry,
-  ...otherProps
-}: {
+const Button: React.FC<ButtonProps> = memo(
+  ({
+    borderRadius = "1.75rem",
+    children,
+    as: Component = "button",
+    containerClassName,
+    borderClassName,
+    duration,
+    className,
+    ...otherProps
+  }) => {
+    return (
+      <Component
+        className={cn(
+          "bg-transparent relative text-xl p-[1px] overflow-hidden md:col-span-2 md:row-span-1",
+          containerClassName
+        )}
+        style={{
+          borderRadius: borderRadius,
+        }}
+        {...otherProps}
+      >
+        <div
+          className="absolute inset-0 rounded-[1.75rem]"
+          style={{ borderRadius: `calc(${borderRadius} * 0.96)` }}
+        >
+          <MovingBorder duration={duration} rx="30%" ry="30%">
+            <div
+              className={cn(
+                "h-20 w-20 opacity-[0.8] bg-[radial-gradient(circle, #CBACF9 40%, transparent 60%)]",
+                borderClassName
+              )}
+            />
+          </MovingBorder>
+        </div>
+
+        <div
+          className={cn(
+            "relative bg-slate-900/[0.8] border border-slate-800 backdrop-blur-xl text-white flex items-center justify-center w-full h-full text-sm antialiased",
+            className
+          )}
+          style={{
+            borderRadius: `calc(${borderRadius} * 0.96)`,
+          }}
+        >
+          {children}
+        </div>
+      </Component>
+    );
+  }
+);
+
+interface MovingBorderProps {
   children: React.ReactNode;
   duration?: number;
   rx?: string;
   ry?: string;
   [key: string]: any;
-}) => {
-  const pathRef = useRef<any>();
-  const progress = useMotionValue<number>(0);
+}
 
-  useAnimationFrame((time) => {
-    const length = pathRef.current?.getTotalLength();
-    if (length) {
-      const pxPerMillisecond = length / duration;
-      progress.set((time * pxPerMillisecond) % length);
-    }
-  });
+const MovingBorder: React.FC<MovingBorderProps> = memo(
+  ({ children, duration = 4000, rx, ry, ...otherProps }) => {
+    const pathRef = useRef<SVGRectElement>(null);
+    const progress = useMotionValue<number>(0);
 
-  const x = useTransform(
-    progress,
-    (val) => pathRef.current?.getPointAtLength(val).x
-  );
-  const y = useTransform(
-    progress,
-    (val) => pathRef.current?.getPointAtLength(val).y
-  );
+    useAnimationFrame((time) => {
+      const length = pathRef.current?.getTotalLength();
+      if (length) {
+        const pxPerMillisecond = length / duration;
+        progress.set((time * pxPerMillisecond) % length);
+      }
+    });
 
-  const transform = useMotionTemplate`translateX(${x}px) translateY(${y}px) translateX(-50%) translateY(-50%)`;
+    const x = useTransform(
+      progress,
+      (val) => pathRef.current?.getPointAtLength(val).x
+    );
+    const y = useTransform(
+      progress,
+      (val) => pathRef.current?.getPointAtLength(val).y
+    );
 
-  return (
-    <>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="none"
-        className="absolute h-full w-full"
-        width="100%"
-        height="100%"
-        {...otherProps}
-      >
-        <rect
-          fill="none"
+    const transform = useMotionTemplate`translateX(${x}px) translateY(${y}px) translateX(-50%) translateY(-50%)`;
+
+    return (
+      <>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+          className="absolute h-full w-full"
           width="100%"
           height="100%"
-          rx={rx}
-          ry={ry}
-          ref={pathRef}
-        />
-      </svg>
-      <motion.div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          display: "inline-block",
-          transform,
-          background: "radial-gradient(circle, #1E3A8A 40%, transparent 60%)", // Modern blue gradient
-          width: "60px", // Increased width for longer lines
-          height: "60px", // Increased height for longer lines
-          borderRadius: "50%",
-        }}
-      >
-        {children}
-      </motion.div>
-    </>
-  );
-};
+          {...otherProps}
+        >
+          <rect
+            fill="none"
+            width="100%"
+            height="100%"
+            rx={rx}
+            ry={ry}
+            ref={pathRef}
+          />
+        </svg>
+        <motion.div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            display: "inline-block",
+            transform,
+            background: "radial-gradient(circle, #CBACF9 40%, transparent 60%)",
+            width: "60px",
+            height: "60px",
+            borderRadius: "50%",
+          }}
+        >
+          {children}
+        </motion.div>
+      </>
+    );
+  }
+);
+
+export { Button, MovingBorder };
