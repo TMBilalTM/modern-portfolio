@@ -72,6 +72,8 @@ const Button: React.FC<ButtonProps> = memo(
   }
 );
 
+Button.displayName = "Button";
+
 interface MovingBorderProps {
   children: React.ReactNode;
   duration?: number;
@@ -142,5 +144,7 @@ const MovingBorder: React.FC<MovingBorderProps> = memo(
     );
   }
 );
+
+MovingBorder.displayName = "MovingBorder";
 
 export { Button, MovingBorder };
