@@ -13,7 +13,7 @@ export const gridItems = [
     className: "lg:col-span-3 md:col-span-6 md:row-span-4 lg:min-h-[60vh]",
     imgClassName: "w-full h-full",
     titleClassName: "justify-end",
-    img: "/b1.svg",
+    img: "/https://i.ibb.co/6sbS8fm/tinywow-bilaltm-afis-65181959.png",
     spareImg: "",
   },
   {
