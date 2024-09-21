@@ -125,16 +125,14 @@ export const MovingBorder = ({
       <motion.div
         style={{
           position: "absolute",
-          top: "50%", // Center vertically
-          left: "50%", // Center horizontally
+          top: 0,
+          left: 0,
           display: "inline-block",
           transform,
           background: "radial-gradient(circle, #1E3A8A 40%, transparent 60%)", // Modern blue gradient
-          width: "80px", // Increased width for longer lines
-          height: "80px", // Increased height for longer lines
+          width: "60px", // Increased width for longer lines
+          height: "60px", // Increased height for longer lines
           borderRadius: "50%",
-          translateX: "-50%", // Center horizontally
-          translateY: "-50%", // Center vertically
         }}
       >
         {children}
