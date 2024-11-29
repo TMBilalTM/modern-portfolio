@@ -5,7 +5,7 @@ git clone https://github.com/TMBilalTM/modern-portfolio.git
 ```
 2-
 ```bash
-cd google-search-next
+cd modern-portfolio
 ```
 3-
 ```bash
